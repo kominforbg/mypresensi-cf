@@ -1,0 +1,108 @@
+.floating-button {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 60px;
+  cursor: pointer;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.floating-button i {
+  font-size: 32px;
+  padding-top: 13px;
+  color: white;
+}
+
+.spinner-wrapper-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  /* background-color: rgba(255, 255, 255, 0.5); */
+  z-index: 9999;
+}
+
+/* custom */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.noborder {
+  border: no !important;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+@media (max-width: 355px) {
+  /* img {
+      display: none;
+  } */
+
+  .width-fold {
+      width:50px !important;
+      /* padding: 1px; */
+  }
+
+  .btn-xxs, .btn-xs, .btn-s, .btn-sm, .btn-m, .btn-l {
+      font-size: 10px !important;
+  }
+
+  .splide-fold {
+      width: 350px !important;
+  }
+
+  .fold-show {
+      display: block;
+  }
+  .fold-hidden {
+      display: none;
+  }
+
+  .font-24 {
+      font-size: 14px !important;
+  }
+
+  .h1 {
+      font-size: 14px !important;
+  }
+
+  .btn-dashboard-float {
+      margin-top: 20px !important;
+      padding: 3px !important;
+  }
+
+  .pb-2 {
+      padding-bottom: 0px !important;
+  }
+
+  .pb-1 {
+      padding-bottom: 0px !important;
+  }
+
+  .font-12 {
+      font-size: 11px !important;
+  }
+
+  .font-11  {
+      font-size: 9px !important;
+  }
+
+  /* Stil default untuk ukuran layar di atas 280px */
+  /* .splide__list {
+      transform: translateX(-230px);
+      transition: transform 0.3s ease;
+  } */
+
+}
