@@ -1,0 +1,629 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>MyPresensi Rembang</title>
+<link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="styles/style.css">
+<link rel="stylesheet" type="text/css" href="styles/style_aziz.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i|Source+Sans+Pro:300,300i,400,400i,600,600i,700,700i,900,900i&display=swap" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="fonts/css/fontawesome-all.min.css">    
+<link rel="manifest" href="_manifest.json" data-pwa-version="set_in_manifest_and_pwa_js">
+<!-- <link rel="apple-touch-icon" sizes="180x180" href="app/icons/icon-192x192.png"> -->
+<link rel="apple-touch-icon" sizes="192x192" href="/images/assets_epresensi/icons_mypresensi/icon-192x192.png">
+<link rel="icon" href="/images/assets_epresensi/icons_mypresensi/icon-72x72.png" type="image/x-icon" />
+<style>
+    .card-overlay-infinite {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        width: 1800px !important;
+        height: 100% !important;
+        z-index: 0;
+        animation: infiniteBG 300s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        background-size: cover;
+        background-repeat: repeat !important;
+        background-position: right top !important;
+        transform: translateX(0px);
+    }
+
+</style>
+</head>
+    
+<body class="theme-light" data-highlight="highlight-green" data-gradient="body-default">
+
+<div id="preloader">
+    <div class="spinner-border color-highlight" role="status"></div>
+</div>    
+<div id="page">
+    
+    <div class="page-content pb-0">
+        <div   data-card-height="cover" class="card text-center pb-5">
+            <div v-if="current_page == 'page_3'" class="text-start card-bottom mb-5 bg-white rounded-m mx-3">
+                <div class="p-4">
+                    <i class="fa fa-check-circle scale-box color-green-dark fa-5x pb-3"></i>
+                    <h1>Thank you!</h1>
+                    <p class="mb-5">
+                        Silahkan kunjungi portal ini untuk akses informasi kehadiran anda!
+                    </p>
+                </div>
+                <div class="row mx-3">
+                    <div class="col-6">
+
+                        <a href="#" @click="goto(1)"
+                            class="back-button btn btn-full btn-m shadow-large rounded-sm text-uppercase font-900 bg-highlight">Reset</a>
+                    </div>
+                    <div class="col-6">
+
+                        <a href="#" @click="gotoDashboard"
+                            class="back-button btn btn-full btn-m shadow-large rounded-sm text-uppercase font-900 bg-green-dark">Selesai</a>
+                    </div>
+                </div>
+            </div>
+            <div v-if="current_page == 'page_2'" class="text-start card-bottom mb-5 bg-white rounded-m mx-3">
+                <div class="p-4">
+                    <h1 class="text-center font-800 font-40 mb-1">MyProfile </h1>
+                    <p class="color-highlight text-center font-12">Profil terpilih</p>
+                    <div class="d-flex">
+                        <div><img src="/images/assets_epresensi/user.png"
+                                class="me-3 rounded-circle shadow-l" width="50"></div>
+                        <div>
+                            <h5 class="mt-1 mb-0 font-12">{{myprofile?.first_name}}</h5>
+                            <p class="font-10 mt-n1 color-red-dark">{{myprofile?.cabang?.cab_akronim}}</p>
+                        </div>
+                        <div class="ms-auto"><span
+                                class="slider-next badge bg-green-dark mt-2 p-2 font-8">active</span></div>
+                    </div>
+                </div>
+                <div class="row mx-3">
+                    <div class="col-6">
+
+                        <a href="#" @click="goto(1)"
+                            class="back-button btn btn-full btn-m shadow-large rounded-sm text-uppercase font-900 bg-highlight">Back</a>
+                    </div>
+                    <div class="col-6">
+
+                        <a href="#" @click="goto(3)"
+                            class="back-button btn btn-full btn-m shadow-large rounded-sm text-uppercase font-900 bg-primary text-white">Lanjut</a>
+                    </div>
+                </div>
+            </div>
+            <div v-if="current_page == 'page_1'" class="text-start card-bottom mb-5 bg-white rounded-m mx-3">
+
+                <div class="p-4">
+
+                    <div class="text-center">
+                    <img class="preload-img" src="/images/assets_epresensi/rembang.webp" width="50">
+
+                    </div>
+                    
+                    <br>
+                    <h1 class="text-center text-uppercase font-900  font-24 mb-1">Login MyPresensi {{myHost}}</h1>
+                    <!-- <h4 class="text-center mt-2 pb-2 text-muted">ASN PEMKAB REMBANG</h4> -->
+
+                    <div class="card card-style "  data-card-height="300" v-show="sss">
+                      
+                        <div v-show="isCameraOpen && isLoading" class="camera-loading">
+                            <ul class="loader-circle">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </div>
+
+                        <div v-if="isCameraOpen" v-show="!isLoading" class="camera-box"
+                            :class="{ 'flash' : isShotPhoto }">
+
+                            <div class="camera-shutter" :class="{'flash' : isShotPhoto}"></div>
+
+                            <video v-show="!isPhotoTaken" ref="camera" :width="450" :height="337.5"
+                                autoplay></video>
+
+                            <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450"
+                                :height="337.5"></canvas>
+                        </div>
+
+                    </div>
+                    <div class="camera-button row">
+                     </div>
+                    <div class="input-style no-borders has-icon validate-field">
+                        <i class="fa fa-user"></i>
+                        <input type="number" v-model="myPIN" class="form-control validate-name font-16 font-900" id="form1a"
+                            placeholder="Masukkan PIN">
+                        <label for="form1a" class="color-blue-dark font-10 mt-1">PIN</label>
+                        <i class="fa fa-times disabled invalid color-red-dark"></i>
+                        <i class="fa fa-check disabled valid color-green-dark"></i>
+                        <em>(required)</em>
+                    </div>
+                    <div v-if="myHost != 'desa'" class="input-style no-borders has-icon validate-field">                            
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                        <input  type="name" v-model="myemail" class="form-control validate-name font-16 font-900" id="form1b"
+                            placeholder="Masukkan Email">
+                        <label  for="form1b" class="color-blue-dark font-10 mt-1">Email</label>
+                        <i class="fa fa-times disabled invalid color-red-dark"></i>
+                        <i class="fa fa-check disabled valid color-green-dark"></i>
+                        <em>(required)</em>
+                    </div>
+                    <div v-if="myHost == 'desa'">
+                    <input  type="hidden" v-model="myemail"  id="form1b"
+                    placeholder="Masukkan Email">
+                    </div>
+                    <hr>
+
+                        <a   href="#" @click="goLogin()" class="mb-1 back-button btn btn-full btn-m shadow-large rounded-sm text-uppercase font-900 bg-blue-dark">LOGIN {{myHost}}</a>
+                        <a  href="#" @click="goto(9)" class="mb-1 back-button btn btn-full btn-m shadow-large rounded-sm text-uppercase font-900 bg-red-dark">Kembali</a>
+                        <hr>
+                </div>
+            </div>
+            
+            <div v-if="current_page == 'page_0'" class="card-bottom mb-5">
+                <h1 class="font-700 font-32 mb-0">MyPresensi </h1>
+                <h6 class="font-400 font-15 mb-3 pb-1 color-highlight">Modul Layanan Presensi Personal Pemkab Rembang </h6>
+                
+                <p class="boxed-text-xl font-14 font-400 line-height-l color-black">
+                    Silahkan Login untuk mendapatkan Akses Dasboard & Tracking Record Presensi Anda. Untuk memperoleh fitur terbaik,
+                    jangan lupa aktifkan ijin penggunaan <mark class="bg-highlight rounded-xl px-3 opacity-70">kamera</mark> & <mark class="bg-highlight rounded-xl px-3 opacity-70">lokasi</mark> saat Login.
+                </p>
+                <a href="#" @click="goto(9)" class="btn btn-m font-900 text-uppercase rounded-l btn-center-l bg-highlight">Get Started</a>
+             </div>
+           
+            <div v-if="current_page == 'page_9'"  class="card-bottom mb-5 pe-3">
+                <div class="card card-style me-0">
+                    <div class="content">
+                        <div class="d-flex">
+                            <div class="align-self-center">
+                            <img class="preload-img" src="/images/assets_epresensi/rembang.webp" width="50">
+                            </div>
+                            <div class="w-100 align-self-center ps-2">
+                                <h1 class="mb-n2">Pilih Modul </h1>
+                                <p class="mb-0 font-11 opacity-60">Silahkan Klik sesuai APlikasi </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-center mb-0">
+                    <a href="#" @click="SetHost('asn')" class="col-6 pe-0 ">
+                        <div class="card card-style me-2 mb-2 bg-pink-dark">
+                            <i class="fas fa-university color-white fa-3x mt-4"></i>
+                            <h1 class="pt-3  color-white">ASN</h1>
+                            <p class="font-11 opacity-50 mt-n1 mb-0  color-white">Epresensi Bagi ASN</p>
+                        </div>
+                    </a>
+                    <a href="#" @click="SetHost('guru')" class="col-6 pe-0 ">
+                        <div class="card card-style me-2 mb-2 bg-blue-dark">
+                            <i class="fas fa-graduation-cap color-white fa-3x mt-4"></i>
+                            <h1 class="pt-3  color-white">GURU</h1>
+                            <p class="font-11 opacity-50 mt-n1 mb-0  color-white">Epresensi Bagi GURU</p>
+                        </div>
+                    </a>   
+                    <a href="#" @click="SetHost('thl')" class="col-6 pe-0 ">
+                        <div class="card card-style me-2 mb-2 bg-green-dark">
+                            <i class="fas fa-hard-hat color-white fa-3x mt-4"></i>
+                            <h1 class="pt-3  color-white">THL</h1>
+                            <p class="font-11 opacity-50 mt-n1 mb-0  color-white">Epresensi Bagi THL</p>
+                        </div>
+                    </a>   
+                    <a href="#" @click="SetHost('desa')" class="col-6 pe-0 ">
+                        <div class="card card-style me-2 mb-2 bg-yellow-dark">
+                            <i class="fas fa-map-marked-alt color-white fa-3x mt-4"></i>
+                            <h1 class="pt-3  color-white">DESA</h1>
+                            <p class="font-11 opacity-50 mt-n1 mb-0  color-white">Epresensi Bagi Desa</p>
+                        </div>
+                    </a>   
+                    
+                </div>
+            </div>
+             <div class="card-overlay bg-18" style="height:70vh"></div>
+            <!--setting height to 70% to make text more easy to read-->
+            <div class="card-overlay bg-gradient-fade"></div>
+        </div>
+         
+    </div>
+    </div>
+    <!-- End of Page Content--> 
+    <div id="notification-1" data-bs-dismiss="toast" data-bs-delay="2000" data-bs-autohide="true" class="toast w-auto notification notification-ios bg-red-light notch-push mt-3">
+        <span data-bs-dismiss="toast" class="notification-icon">
+            <i class="fa fa-bell"></i>
+            <em>Informasi</em>
+            <i  class="fa fa-times-circle"></i>
+        </span>
+        <h1 class="font-15 color-white mb-n3" id="responseTitle"></h1>
+        <p class="pt-2" id="responseMessage">
+        </p>
+    </div>
+    <div id="notification-2" data-bs-dismiss="toast" data-bs-delay="2000" data-bs-autohide="true" class="toast w-auto notification notification-ios bg-red-light notch-push mt-3">
+        <span data-bs-dismiss="toast" class="notification-icon">
+            <i class="fa fa-bell"></i>
+            <em>Informasi</em>
+            <i  class="fa fa-times-circle"></i>
+        </span>
+        <h1 class="font-15 color-white mb-n3" id="responseTitle2"></h1>
+        <p class="pt-2" id="responseMessage2">
+            ERROR LOGIN
+        </p>
+    </div>
+
+<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+<script type="text/javascript" src="scripts/custom.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="module">
+    const app = Vue.createApp({
+
+        data() {
+            return {
+                count: 0,
+                current_page: 'page_0',
+                versi:'202401008',
+
+                page0: true,
+                page1: false,
+                page2: false,
+                page3: false,
+                page4: false,
+                myPIN: '',
+                myemail: '',
+                myCamID:'',
+                myCamLabel:'',
+                myHost:'',
+
+                isCameraOpen: false,
+                isPhotoTaken: false,
+                isShotPhoto: false,
+                isLoading: false,
+                link: '#',
+                
+                myprofile: { first_name: '' },
+                // data_profil:{},
+                loading: 1
+            }
+        },
+        watch: {
+            versi(value) {
+                console.log("watch--versi--" + value )
+            },
+
+            current_page(value) {
+                if(value == 'page_1'){
+                      console.log(Date.now(), !!navigator.geolocation)
+
+                    if(navigator.mediaDevices.getUserMedia({video: true})){
+                        }
+
+                        if(navigator.geolocation) {
+                        
+                        navigator.geolocation.getCurrentPosition(pos => {
+                        
+                        }, err => {
+                            
+                        })
+
+                    } else {
+                        console.log("Geo Location not supported by browser");
+                    }
+                }
+            },
+            myprofile(value) {
+                console.log(value)
+                window.localStorage.setItem('myprofile', JSON.stringify(value))
+                window.localStorage.setItem('pin', this.myprofile.pin)
+                window.localStorage.setItem('email', this.myprofile.email)
+                window.localStorage.setItem('myCamID', this.myCamID)
+                window.localStorage.setItem('myCamLabel', this.myCamLabel)
+
+            },
+            myPIN(value) {
+                // console.log(value)
+
+            },
+            myemail(value) {
+                // console.log(value)
+
+            },
+        },
+        methods: {
+            increment() {
+                // `this` akan mengarah ke _instance_ komponen
+                this.count++
+            },
+            SetHost(mymodul){
+                    window.localStorage.setItem('host',mymodul)
+                    this.myHost = mymodul
+                    this.goto(1)
+            },
+            goto(nomor) {
+                // this.page1 = (nomor == 1)
+                // this.page2 = (nomor == 2)
+                // this.page3 = (nomor == 3)
+                // this.page4 = (nomor == 4)
+                // this.page5 = (nomor == 5)
+                this.current_page = 'page_' + nomor
+            },
+            gotoDashboard() {
+                let mydomain = window.location.origin
+                // if(mydomain == 'https://mypresensi.rembangkab.go.id' ){
+                //     mydomain = mydomain+'/' 
+                // }else if( mydomain == 'https://epresensiasn.rembangkab.go.id'){
+                //     mydomain = mydomain+'/mypresensiv2/'
+                // }else{
+                //     mydomain = mydomain+'/mypresensiv2/'
+                // } 
+
+                window.location.href = mydomain+'/index.html'
+                // window.location.href = "https://mypresensi.rembangkab.go.id/"
+
+            },
+            CekMobile(){
+                let isMobile = {
+                    Android: function() {return navigator.userAgent.match(/Android/i);},
+                    iOS: function() {return navigator.userAgent.match(/iPhone|iPad|iPod/i);},
+                    any: function() {return (isMobile.Android() || isMobile.iOS());}
+                };
+        
+                if(isMobile.iOS()){
+                    window.localStorage.setItem('device', 'device-is-ios')
+                }
+                if(isMobile.Android()){
+                    window.localStorage.setItem('device', 'device-is-android')
+        
+                }
+
+            },	
+            getCamID(){
+                if (!navigator.mediaDevices?.enumerateDevices) {
+                        console.log("enumerateDevices() not supported.");
+                    } else {
+                        // List cameras and microphones.
+                        navigator.mediaDevices
+                        .enumerateDevices()
+                        .then((devices) => {
+                            devices.forEach((device) => {
+                            if(device.kind == "videoinput"){
+                                this.myCamID = device.deviceId
+                                this.myCamLabel = device.label
+                            }
+                            console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+                            });
+                        })
+                        .catch((err) => {
+                            console.error(`${err.name}: ${err.message}`);
+                        });
+                    }
+            },
+            goLogin() {
+                let host = window.localStorage.getItem('host') || 'asn'
+                this.getCamID()
+                let param = { pin: this.myPIN, email: this.myemail }
+               
+                let myhost = window.location.origin
+                if(myhost == 'https://mypresensi.rembangkab.go.id' ){
+                    myhost = myhost+'/'+host+'/api/mypresensi/login'
+                }else if( myhost == 'https://epresensiasn.rembangkab.go.id'){
+                    myhost = myhost+'/api/mypresensi/login'
+                }else{
+                     myhost =  myhost+'/'+host+'/api/mypresensi/login'
+                } 
+
+                let config = {
+                        //  adapter: axiosJsonpAdapter,
+                        //  withCredentials: false,
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url:myhost,
+                        headers: { 
+                            'Accept': 'application/json, text/plain, */*', 
+                            'Content-Type': 'application/json', 
+                            'Access-Control-Allow-Origin': '*'
+                        },
+                        data : param
+                        };
+                    axios.request(config)
+                    .then(response => {
+                        this.count = 1
+                        console.log(response)
+                        var prof = response.data.profile || null
+                        var res = response.data.response || null
+
+                        console.log("----", prof)
+                        if (prof == null) {
+
+                            document.getElementById('responseTitle').innerHTML = response.data.response.title;
+                            document.getElementById('responseMessage').innerHTML = response.data.response.message;
+
+                            // const modal = document.getElementById('notification-1');
+                            // modal.classList.add('show');
+
+                            const toastElement = document.getElementById('notification-1');
+                            const toast = new bootstrap.Toast(toastElement);
+
+                            // Tampilkan modal
+                            toast.show();
+
+                            // Sembunyikan modal setelah 2 detik
+                            setTimeout(function() {
+                            toast.hide();
+                            }, 3000);
+
+                            // this.goto(4)
+                        } else {
+                            this.myprofile = response.data.profile
+                            this.myPIN = response.data.profile.pin
+                            this.myemail = response.data.profile.email
+                            this.goto(2)
+                        }
+
+                        // console.log(this.myprofil)
+                    })
+                    .then(response => {
+                        //    this.goto(2)
+                    })
+                    .catch(error => {
+                        // console.log(error)
+                        // this.goto(3)
+                        const toastElement = document.getElementById('notification-2');
+                            const toast = new bootstrap.Toast(toastElement);
+
+                            // Tampilkan modal
+                            toast.show();
+
+                            // Sembunyikan modal setelah 2 detik
+                            setTimeout(function() {
+                            toast.hide();
+                            }, 3000);
+                    })
+                    .finally(() => this.loading = false)
+            },
+            goLoginASN() {
+                window.localStorage.setItem('host','asn')
+                this.goLogin()
+                
+            },
+            goLoginGURU() {
+                window.localStorage.setItem('host','guru')
+                this.goLogin()
+                
+            },
+            goLoginTHL() {
+                window.localStorage.setItem('host','thl')
+                this.goLogin()
+                
+            },
+
+            toggleCamera() {
+            if(this.isCameraOpen) {
+                this.isCameraOpen = false;
+                this.isPhotoTaken = false;
+                this.isShotPhoto = false;
+                this.stopCameraStream();
+            } else {
+                this.isCameraOpen = true;
+                this.createCameraElement();
+            }
+            },
+            createCameraElement() {
+            this.isLoading = true;
+
+            const constraints = (window.constraints = {
+            audio: false,
+            video: true
+            });
+
+                navigator.mediaDevices
+                .getUserMedia(constraints)
+                .then(stream => {
+                this.isLoading = false;
+                this.$refs.camera.srcObject = stream;
+                })
+                .catch(error => {
+                this.isLoading = false;
+                alert("May the browser didn't support or there is some errors.");
+                });
+            },
+            stopCameraStream() {
+            let tracks = this.$refs.camera.srcObject.getTracks();
+
+                    tracks.forEach(track => {
+                        track.stop();
+                    });
+            },
+            takePhoto() {
+                if(!this.isPhotoTaken) {
+                    this.isShotPhoto = true;
+
+                    const FLASH_TIMEOUT = 50;
+
+                    setTimeout(() => {
+                    this.isShotPhoto = false;
+                    }, FLASH_TIMEOUT);
+                }
+                
+                this.isPhotoTaken = !this.isPhotoTaken;
+                
+                const context = this.$refs.canvas.getContext('2d');
+                context.drawImage(this.$refs.camera, 0, 0, 450, 337.5);
+            },
+            downloadImage() {
+            const download = document.getElementById("downloadPhoto");
+            const canvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
+            .replace("image/jpeg", "image/octet-stream");
+            download.setAttribute("href", canvas);
+            },
+             IsinIframe () {
+            try {
+                return window.self !== window.top;
+            } catch (e) {
+                return true;
+            }
+        },
+        },
+        mounted() {
+
+          // ---akes kamera
+          
+          let myversi = window.localStorage.getItem('versi') || this.versi;
+            this.versi = myversi;
+            window.localStorage.setItem('versi',this.versi)
+
+            const broadcast = new BroadcastChannel('mypresensiChannel');
+            broadcast.postMessage({type: 'APP_VER',versi: this.versi,});
+            // Listen to the response
+            broadcast.onmessage = (event) => {
+                // console.log(event.data.payload);
+
+                if(event.data.type == 'APP_VER'){
+                    window.localStorage.setItem('versi',event.data.payload)
+
+                    if(event.data.payload != this.versi){
+                        broadcast.postMessage({type: 'REINSTALL',versi: this.versi,});
+                    }
+                    
+                }
+
+            };
+          
+          // ---akes kamera
+         
+        },
+
+        created() {
+            let myhost = window.localStorage.getItem('host');
+
+            if (myhost !=null) {
+                let mydomain = window.location.origin
+                if(mydomain == 'https://mypresensi.rembangkab.go.id' ){
+                    mydomain = mydomain+'/' 
+                }else if( mydomain == 'https://epresensiasn.rembangkab.go.id'){
+                    mydomain = mydomain+'/mypresensiv2/'
+                }else{
+                    mydomain = mydomain+'/mypresensiv2/'
+                } 
+
+                // window.location.href = mydomain
+            }else{
+
+                localStorage.clear();
+            }
+            
+            let isMobile = {
+                Android: function() {return navigator.userAgent.match(/Android/i);},
+                iOS: function() {return navigator.userAgent.match(/iPhone|iPad|iPod/i);},
+                any: function() {return (isMobile.Android() || isMobile.iOS());}
+            };
+
+            this.isDesktop = !isMobile.any();
+
+            console.log("asasas",!isMobile.any());
+            
+        },
+
+    })
+    app.mount('#page')
+</script>
+</body>
