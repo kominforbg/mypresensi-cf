@@ -4,11 +4,20 @@
 
 /*Typography Settings*/
 body {
+  
   font-size: 13px;
   font-family: "Roboto", sans-serif !important;
   line-height: 26px !important;
   color: #6c6c6c !important;
-  background-color: #f0f0f0;
+  background-color: #fff;
+  min-height: 100vh;
+  position: relative;
+  /* overflow: hidden !important; */
+  max-width: 480px;
+  min-width: 320px;
+  margin: 0 auto;
+  overflow-y: auto;
+
 }
 
 h1, h2, h3, h4, h5, h6 {
